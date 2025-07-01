@@ -7,6 +7,16 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2Zmpsem1ueWZtdHFkeXF1YXdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjQ3MjgsImV4cCI6MjA2NTk0MDcyOH0.PENbBzU2LHJz883VFVW5OfLTXhFNrRz0gE356M843S4'
 );
 
+// ✅ 如果是 Supabase 重定向传来的 token，就自动转为 hash
+const queryParams = new URLSearchParams(window.location.search);
+const token = queryParams.get("token");
+const type = queryParams.get("type");
+
+if (token && type === "recovery") {
+  const newUrl = `${window.location.origin}${window.location.pathname}#access_token=${token}&type=recovery`;
+  window.location.replace(newUrl);
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
   // ✅ 从 URL hash 中获取 access_token 和 refresh_token
   const urlParams = new URLSearchParams(window.location.hash.substring(1));
