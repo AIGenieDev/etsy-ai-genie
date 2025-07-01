@@ -1,69 +1,59 @@
-// reset.js
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+// === reset.js ===
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// ✅ 初始化 Supabase 客户端
 const supabase = createClient(
   'https://gvfjlzmnyfmtqdyquawp.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2Zmpsem1ueWZtdHFkeXF1YXdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjQ3MjgsImV4cCI6MjA2NTk0MDcyOH0.PENbBzU2LHJz883VFVW5OfLTXhFNrRz0gE356M843S4'
 );
 
-// ✅ 如果是 Supabase 重定向传来的 token，就自动转为 hash
-const queryParams = new URLSearchParams(window.location.search);
-const token = queryParams.get("token");
-const type = queryParams.get("type");
+// 获取 HTML 元素
+const statusDiv = document.getElementById('status');
+const resetBtn = document.getElementById('reset-btn');
+const newPasswordInput = document.getElementById('new-password');
 
-if (token && type === "recovery") {
-  const newUrl = `${window.location.origin}${window.location.pathname}#access_token=${token}&type=recovery`;
-  window.location.replace(newUrl);
+// 提取 access_token
+const url = new URL(window.location.href);
+const accessToken = url.hash.match(/access_token=([^&]*)/)?.[1];
+
+// 初始状态
+if (!accessToken) {
+  statusDiv.textContent = '❌ Invalid or expired link.';
+  statusDiv.classList.add('error');
+} else {
+  verifyToken();
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-  // ✅ 从 URL hash 中获取 access_token 和 refresh_token
-  const urlParams = new URLSearchParams(window.location.hash.substring(1));
-  const accessToken = urlParams.get("access_token");
-  const refreshToken = urlParams.get("refresh_token");
+// 验证 token 是否有效
+async function verifyToken() {
+  try {
+    await supabase.auth.verifyOtp({ type: 'recovery', token: accessToken });
+    console.log("✅ Token verified");
+  } catch (err) {
+    console.error("❌ Verification failed:", err);
+    statusDiv.textContent = err?.message?.includes('was issued in the future')
+      ? '⚠️ Please correct your device time and refresh.'
+      : '❌ Verification failed. The link may be expired or invalid.';
+    statusDiv.classList.add('error');
+  }
+}
 
-  if (!accessToken || !refreshToken) {
-    document.getElementById("status").textContent = "❌ Missing access_token or refresh_token in URL.";
+// 点击“更新密码”按钮
+resetBtn?.addEventListener('click', async () => {
+  const newPassword = newPasswordInput?.value?.trim();
+  if (!newPassword || newPassword.length < 6) {
+    statusDiv.textContent = '❗ Password must be at least 6 characters.';
+    statusDiv.className = 'message error';
     return;
   }
 
-  // ✅ 设置 Supabase 会话
-  const { error: sessionError } = await supabase.auth.setSession({
-    access_token: accessToken,
-    refresh_token: refreshToken
-  });
-
-  if (sessionError) {
-    document.getElementById("status").textContent = "❌ Failed to set session: " + sessionError.message;
-    return;
-  }
-
-  // ✅ 按钮点击逻辑
-  const resetBtn = document.getElementById("reset-btn");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", async () => {
-      const newPassword = document.getElementById("new-password").value;
-
-      if (!newPassword || newPassword.length < 6) {
-        document.getElementById("status").textContent = "❌ Please enter a password with at least 6 characters.";
-        return;
-      }
-
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-
-      if (error) {
-        document.getElementById("status").textContent = "❌ " + error.message;
-      } else {
-        document.getElementById("status").textContent = "✅ Password updated successfully!";
-        setTimeout(() => {
-          window.location.href = "login.html"; // ✅ 可选：成功后跳转
-        }, 2000);
-      }
-    });
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) {
+    statusDiv.textContent = '❌ Failed to update password. Please try again.';
+    statusDiv.className = 'message error';
   } else {
-    document.getElementById("status").textContent = "❌ Reset button not found.";
+    statusDiv.textContent = '✅ Password updated successfully! You can now re-login from the extension.';
+    statusDiv.className = 'message success';
+    resetBtn.disabled = true;
+    newPasswordInput.disabled = true;
   }
 });
