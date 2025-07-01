@@ -11,9 +11,11 @@ const statusDiv = document.getElementById('status');
 const resetBtn = document.getElementById('reset-btn');
 const newPasswordInput = document.getElementById('new-password');
 
-// 提取 access_token
+// 支持 hash (#access_token=...) 和 query (?token=...)
 const url = new URL(window.location.href);
-const accessToken = url.hash.match(/access_token=([^&]*)/)?.[1];
+const hashToken = url.hash.match(/access_token=([^&]*)/)?.[1];
+const queryToken = url.searchParams.get('token');
+const accessToken = hashToken || queryToken;
 
 // 初始状态
 if (!accessToken) {
