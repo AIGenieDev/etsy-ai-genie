@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <title>Reset Password – AI Genie</title>
 
-  <!-- ✅ 删除错误引用的 umd 脚本 -->
-  <!-- <script src="supabase.umd.js"></script> -->
-
   <style>
     body {
       background: #f5f6fc;
@@ -110,10 +107,10 @@
     <h2>Reset Password</h2>
     <input type="password" id="new-password" placeholder="Enter new password" />
     <button id="reset-btn">Update Password</button>
-    <div class="message" id="status"></div>
+    <div class="message" id="status">If the page doesn't respond, please make sure the link contains both <code>access_token</code> and <code>refresh_token</code>.</div>
   </div>
 
   <!-- ✅ 正确引入 JS -->
-  <script type="module" src="reset.js"></script>
+  <script type="module" src="reset.js?v=2"></script>
 </body>
 </html>
