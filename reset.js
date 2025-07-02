@@ -10,7 +10,7 @@ const supabase = createClient(
 const statusDiv = document.getElementById('status');
 const resetBtn = document.getElementById('reset-btn');
 const newPasswordInput = document.getElementById('new-password');
-const closeBtn = document.getElementById('close-btn'); // 获取关闭按钮
+
 
 // 支持 hash (#access_token=...) 和 query (?token=...)
 const url = new URL(window.location.href);
@@ -58,7 +58,7 @@ resetBtn?.addEventListener('click', async () => {
     statusDiv.className = 'message success';
     resetBtn.disabled = true;
     newPasswordInput.disabled = true;
-    closeBtn.style.display = 'block'; // 显示“Close This Page”按钮
+   
   }
 });
 
