@@ -58,11 +58,11 @@ resetBtn?.addEventListener('click', async () => {
     statusDiv.className = 'message success';
     resetBtn.disabled = true;
     newPasswordInput.disabled = true;
-    closeBtn.style.display = 'block'; // 显示关闭按钮
+    closeBtn.style.display = 'block'; // 显示“Close This Page”按钮
   }
 });
 
-// 点击“Close this page”按钮
+// 推荐写法：点击“Close This Page”按钮时弹出提示框
 closeBtn?.addEventListener('click', () => {
-  window.close();
+  alert('✅ Password updated successfully! You can now close this page and re-login from the extension.');
 });
