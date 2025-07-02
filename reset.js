@@ -10,6 +10,7 @@ const supabase = createClient(
 const statusDiv = document.getElementById('status');
 const resetBtn = document.getElementById('reset-btn');
 const newPasswordInput = document.getElementById('new-password');
+const closeBtn = document.getElementById('close-btn'); // 获取关闭按钮
 
 // 支持 hash (#access_token=...) 和 query (?token=...)
 const url = new URL(window.location.href);
@@ -53,9 +54,15 @@ resetBtn?.addEventListener('click', async () => {
     statusDiv.textContent = '❌ Failed to update password. Please try again.';
     statusDiv.className = 'message error';
   } else {
-    statusDiv.textContent = '✅ Password updated successfully! You can now re-login from the extension.';
+    statusDiv.textContent = '✅ Password updated successfully! You can now close this page and re-login from the extension.';
     statusDiv.className = 'message success';
     resetBtn.disabled = true;
     newPasswordInput.disabled = true;
+    closeBtn.style.display = 'block'; // 显示关闭按钮
   }
+});
+
+// 点击“Close this page”按钮
+closeBtn?.addEventListener('click', () => {
+  window.close();
 });
