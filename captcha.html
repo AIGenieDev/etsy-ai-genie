@@ -3,22 +3,45 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <title>Captcha Verification</title>
     <script src="https://hcaptcha.com/1/api.js" async defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 40px;
+        background-color: #f9f9f9;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Captcha Verification</h1>
+    <h2>Complete Captcha to Continue</h2>
+
+    <!-- hCaptcha 验证区 -->
     <div
       class="h-captcha"
       data-sitekey="bf2c9f30-e4b4-4e80-a80e-2d0cdbc88b96"
       data-callback="onCaptchaSuccess"
+      data-size="invisible"
     ></div>
+
+    <!-- 提交按钮 -->
+    <form onsubmit="event.preventDefault(); hcaptcha.execute();">
+      <button type="submit">Verify</button>
+    </form>
 
     <script>
       function onCaptchaSuccess(token) {
-        window.parent.postMessage(
-          { type: "captcha-success", token },
-          "*"
-        );
+        // 将 token 传回 popup.js
+        window.opener.postMessage({ "hcaptcha-token": token }, "*");
+        window.close(); // 验证成功后自动关闭
       }
     </script>
   </body>
