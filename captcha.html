@@ -1,36 +1,25 @@
+<!-- captcha.html -->
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CAPTCHA Verification</title>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 150px;
-      margin: 0;
-      background-color: #f9f9f9;
-    }
-  </style>
-</head>
-<body>
-  <form id="captcha-form">
-    <div class="cf-turnstile"
-         data-sitekey="你的-Site-Key-替换这里"
-         data-callback="onCaptchaSuccess"
-         data-theme="light">
-    </div>
-  </form>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
+  </head>
+  <body>
+    <h1>Captcha Verification</h1>
+    <div
+      class="h-captcha"
+      data-sitekey="bf2c9f30-e4b4-4e80-a80e-2d0cdbc88b96"
+      data-callback="onCaptchaSuccess"
+    ></div>
 
-  <script>
-    function onCaptchaSuccess(token) {
-      // 通知父页面（你的扩展 popup.html）验证通过
-      window.parent.postMessage({ captchaSuccess: true, token }, '*');
-    }
-  </script>
-</body>
+    <script>
+      function onCaptchaSuccess(token) {
+        window.parent.postMessage(
+          { type: "captcha-success", token },
+          "*"
+        );
+      }
+    </script>
+  </body>
 </html>
