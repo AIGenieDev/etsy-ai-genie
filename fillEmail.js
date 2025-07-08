@@ -1,22 +1,27 @@
 (function () {
-  // Step 1: 从 URL 获取 email，并保存到 localStorage
-  let emailFromURL = new URLSearchParams(window.location.search).get("email");
+  // ✅ 优先从 hash 中获取 email，例如：#email=sarah@example.com
+  function getEmailFromHashOrStorage() {
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const emailFromHash = hashParams.get("email");
+    if (emailFromHash) {
+      localStorage.setItem("checkout_email", emailFromHash);
+      console.log("[AutoFill] Email found in HASH:", emailFromHash);
+      return emailFromHash;
+    }
 
-  if (emailFromURL) {
-    localStorage.setItem("checkout_email", emailFromURL);
-    console.log("[AutoFill] Email found in URL:", emailFromURL);
-  } else {
-    emailFromURL = localStorage.getItem("checkout_email");
-    console.log("[AutoFill] Email loaded from localStorage:", emailFromURL);
+    const stored = localStorage.getItem("checkout_email");
+    console.log("[AutoFill] Email loaded from localStorage:", stored);
+    return stored;
   }
 
-  // Step 2: 如果获取到了 email，尝试自动填入输入框
-  if (emailFromURL) {
+  const email = getEmailFromHashOrStorage();
+
+  if (email) {
     const fillEmail = (attempt = 1) => {
       const input = document.querySelector('input[type="email"]');
       if (input) {
         if (input.value === '') {
-          input.value = emailFromURL;
+          input.value = email;
           input.dispatchEvent(new Event("input", { bubbles: true }));
           console.log("[AutoFill] Email auto-filled successfully.");
         } else {
