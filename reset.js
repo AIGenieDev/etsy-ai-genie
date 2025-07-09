@@ -11,7 +11,6 @@ const statusDiv = document.getElementById('status');
 const resetBtn = document.getElementById('reset-btn');
 const newPasswordInput = document.getElementById('new-password');
 
-
 // 支持 hash (#access_token=...) 和 query (?token=...)
 const url = new URL(window.location.href);
 const hashToken = url.hash.match(/access_token=([^&]*)/)?.[1];
@@ -49,20 +48,44 @@ resetBtn?.addEventListener('click', async () => {
     return;
   }
 
-  const { error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) {
-    statusDiv.textContent = '❌ Failed to update password. Please try again.';
-    statusDiv.className = 'message error';
-  } else {
-    statusDiv.textContent = '✅ Password updated successfully! You can now close this page and re-login from the extension.';
-    statusDiv.className = 'message success';
-    resetBtn.disabled = true;
-    newPasswordInput.disabled = true;
-   
-  }
-});
+  // 👉 打开 hCaptcha 页面
+  const captchaWindow = window.open(
+    "https://aigeniedev.github.io/etsy-ai-genie/captcha.html",
+    "hcaptcha",
+    "width=500,height=600"
+  );
 
-// 推荐写法：点击“Close This Page”按钮时弹出提示框
-closeBtn?.addEventListener('click', () => {
-  alert('✅ Password updated successfully! You can now close this page and re-login from the extension.');
+  // 👉 等待 hCaptcha 返回 token
+  window.addEventListener("message", async function handleCaptcha(event) {
+    if (event.origin !== "https://aigeniedev.github.io") return;
+
+    const captchaToken = event.data["hcaptcha-token"];
+    if (!captchaToken) {
+      statusDiv.textContent = "❌ Captcha verification failed.";
+      statusDiv.className = 'message error';
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser(
+        { password: newPassword },
+        { captchaToken }
+      );
+
+      if (error) {
+        statusDiv.textContent = '❌ Failed to update password. Please try again.';
+        statusDiv.className = 'message error';
+      } else {
+        statusDiv.textContent = '✅ Password updated successfully! You can now close this page and re-login from the extension.';
+        statusDiv.className = 'message success';
+        resetBtn.disabled = true;
+        newPasswordInput.disabled = true;
+      }
+    } catch (err) {
+      statusDiv.textContent = '❌ Unknown error. Please try again.';
+      statusDiv.className = 'message error';
+    }
+
+    window.removeEventListener("message", handleCaptcha); // 移除监听器
+  }, { once: true });
 });
