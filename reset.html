@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reset Password – AI Genie</title>
+  <script src="supabase.umd.js"></script>
+
+  <style>
+    body {
+      background: #f5f6fc;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      gap: 10px;
+    }
+
+    .brand img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .brand span {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(to right, #ea7de7, #7f7df7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    input,
+    button {
+      
+      max-width: 260px;
+      padding: 14px 20px;
+      border-radius: 9999px;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: none;
+      outline: none;
+    }
+
+    input {
+	width: 200px;
+      margin: 0 auto 20px;
+      display: block;
+      background: white;
+    }
+
+    button {
+	width: 240px;
+      background: linear-gradient(to right, #f4a4f4, #7a70ff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.02);
+    }
+
+    .message {
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    .message.error {
+      color: red;
+    }
+
+    .message.success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand">
+      <img src="logo.png" alt="logo" />
+      <span>Etsy AI Genie</span>
+    </div>
+
+    <h2>Reset Password</h2>
+    <input type="password" id="new-password" placeholder="Enter new password" />
+    <button id="reset-btn">Update Password</button>
+    <div class="message" id="status"></div>
+
+  </div>
+
+  <script type="module" src="reset.js"></script>
+
+</body>
+</html>
