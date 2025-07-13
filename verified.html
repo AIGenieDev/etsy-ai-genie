@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Email Verified – AI Genie</title>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      'https://gvfjlzmnyfmtqdyquawp.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2Zmpsem1ueWZtdHFkeXF1YXdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjQ3MjgsImV4cCI6MjA2NTk0MDcyOH0.PENbBzU2LHJz883VFVW5OfLTXhFNrRz0gE356M843S4'
+    );
+
+    const statusEl = document.getElementById('status');
+    const descEl = document.getElementById('desc');
+    const errorEl = document.getElementById('error');
+
+    async function handleRedirect() {
+      const url = new URL(window.location.href);
+      const hashToken = url.hash.match(/access_token=([^&]*)/)?.[1];
+      const refreshToken = url.hash.match(/refresh_token=([^&]*)/)?.[1];
+
+      if (!hashToken || !refreshToken) {
+        statusEl.textContent = '❌ Missing token';
+        descEl.textContent = '';
+        errorEl.textContent = 'Please use the verification link from your email.';
+        return;
+      }
+
+      descEl.textContent = '✅ Verification success! Redirecting to extension...';
+
+      // ✅ 跳转到插件 popup 页面并附带 token 参数
+      const extensionId = chrome.runtime?.id || 'YOUR_EXTENSION_ID_HERE'; // 替换为真实扩展ID或用 dev 模式测试
+      const redirectUrl = `chrome-extension://${extensionId}/popup.html#access_token=${hashToken}&refresh_token=${refreshToken}`;
+      
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 1000);
+    }
+
+    handleRedirect();
+  </script>
+
+  <style>
+    body {
+      background: #f5f6fc;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      gap: 10px;
+    }
+
+    .brand img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .brand span {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(to right, #ea7de7, #7f7df7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      margin: 0 auto 20px;
+      max-width: 280px;
+    }
+
+    .button {
+      display: inline-block;
+      background: linear-gradient(to right, #f4a4f4, #7a70ff);
+      color: white;
+      font-weight: bold;
+      padding: 14px 24px;
+      border-radius: 9999px;
+      font-size: 16px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand">
+      <img src="logo.png" alt="logo" />
+      <span>Etsy AI Genie</span>
+    </div>
+
+    <h2 id="status">Email Verified ✅</h2>
+    <p id="desc">Logging you in automatically...</p>
+    <p id="error" style="color:red;"></p>
+  </div>
+</body>
+</html>
