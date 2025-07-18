@@ -57,7 +57,7 @@
   </style>
 </head>
 <body>
-  <form class="form-container" action="https://formsubmit.co/etsyaigenie@gmail.com" method="POST">
+  <form class="form-container" action="https://formsubmit.co/ajax/etsyaigenie@gmail.com" method="POST" id="contact-form">
     <h2>Contact Us</h2>
 
     <input type="text" name="name" placeholder="Your Name" required>
@@ -66,13 +66,36 @@
 
     <input type="hidden" name="_captcha" value="false">
     <input type="hidden" name="_template" value="box">
-    <input type="hidden" name="_next" value="https://aigeniedev.github.io/etsy-ai-genie/thanks.html">
 
     <button type="submit">Send</button>
   </form>
-  
-  
-  
-  
+
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          alert("Message sent successfully!");
+          form.reset();
+        } else {
+          alert("Failed to send message. Please try again.");
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>
